@@ -1,0 +1,90 @@
+SQL> 
+SQL> select DEALER_NAME, sum
+  2  (
+  3    (select count(vin) from newcars where dlr.dealer_id = newcars.dealer_id and date_sold > :start_date) +
+  4    (select count(vin) from dealerswap where dlr.dealer_id = dealerswap.dealer_id_to and date_swapped > :start_date) -
+  5    (select count(vin) from dealerswap where dlr.dealer_id = dealerswap.dealer_id_from and date_swapped > :start_date)
+  6  ) as TOTAL_SOLD_NEW
+  7  from dealerweb dlr
+  8  where lower(dealer_name) like :make
+  9  group by dealer_name
+ 10  order by TOTAL_SOLD_NEW ASC;
+
+DEALER_NAME                              TOTAL_SOLD_NEW                                                                                               
+---------------------------------------- --------------                                                                                               
+Mills Honda                                          24                                                                                               
+Ken Vance Honda                                      46                                                                                               
+Luther Mankato Honda                                 53                                                                                               
+Luther St Cloud Honda                                61                                                                                               
+Tom Kadlec Honda                                    109                                                                                               
+Richfield Bloomington Honda                         132                                                                                               
+Inver Grove Honda                                   187                                                                                               
+Walser Honda                                        194                                                                                               
+Hopkins Honda                                       194                                                                                               
+Buerkle Honda                                       202                                                                                               
+Luther Brookdale Honda                              313                                                                                               
+
+11 rows selected.
+
+SQL> 
+SQL> exec :make := '%toyota%';
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> select DEALER_NAME, sum
+  2  (
+  3    (select count(vin) from newcars where dlr.dealer_id = newcars.dealer_id and date_sold > :start_date) +
+  4    (select count(vin) from dealerswap where dlr.dealer_id = dealerswap.dealer_id_to and date_swapped > :start_date) -
+  5    (select count(vin) from dealerswap where dlr.dealer_id = dealerswap.dealer_id_from and date_swapped > :start_date)
+  6  ) as TOTAL_SOLD_NEW
+  7  from dealerweb dlr
+  8  where lower(dealer_name) like :make
+  9  group by dealer_name
+ 10  order by TOTAL_SOLD_NEW ASC;
+
+DEALER_NAME                              TOTAL_SOLD_NEW                                                                                               
+---------------------------------------- --------------                                                                                               
+Heintz Toyota                                        55                                                                                               
+St Cloud Toyota                                     106                                                                                               
+Carlson Toyota                                      122                                                                                               
+Inver Grove Toyota                                  173                                                                                               
+Luther Brookdale Toyota                             179                                                                                               
+Rudy Luther Toyota                                  261                                                                                               
+Walser Toyota                                       274                                                                                               
+Maplewood Toyota                                    319                                                                                               
+Burnsville Toyota                                   343                                                                                               
+
+9 rows selected.
+
+SQL> 
+SQL> exec :make := '%nissan%';
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> select DEALER_NAME, sum
+  2  (
+  3    (select count(vin) from newcars where dlr.dealer_id = newcars.dealer_id and date_sold > :start_date) +
+  4    (select count(vin) from dealerswap where dlr.dealer_id = dealerswap.dealer_id_to and date_swapped > :start_date) -
+  5    (select count(vin) from dealerswap where dlr.dealer_id = dealerswap.dealer_id_from and date_swapped > :start_date)
+  6  ) as TOTAL_SOLD_NEW
+  7  from dealerweb dlr
+  8  where lower(dealer_name) like :make
+  9  group by dealer_name
+ 10  order by TOTAL_SOLD_NEW ASC;
+
+DEALER_NAME                              TOTAL_SOLD_NEW                                                                                               
+---------------------------------------- --------------                                                                                               
+Coon Rapids Nissan                                   59                                                                                               
+Kline Nissan                                         70                                                                                               
+Morries Nissan                                       79                                                                                               
+Wayzata Nissan                                       90                                                                                               
+Eden Prairie Nissan                                 101                                                                                               
+Luther Nissan                                       106                                                                                               
+Walser Nissan                                       108                                                                                               
+
+7 rows selected.
+
+SQL> 
+SQL> spool off;
