@@ -16,7 +16,7 @@ public class AutoWebing extends WebEngine
 		long startTime = System.currentTimeMillis();
 		
 		//vehicleList = vehicleFinder.searchVehicles("https://www.buerklehonda.com", "/inventory/New/", "?page=", "Vehicles Found", 1, 1);
-		vehicleList = vehicleFinder.searchVehicles("https://www.buerklehonda.com", "/inventory/Used/", "?page=", "Vehicles Found", 1, 1);
+		//vehicleList = vehicleFinder.searchVehicles("https://www.buerklehonda.com", "/inventory/Used/", "?page=", "Vehicles Found", 1, 1);
 		//vehicleList = vehicleFinder.searchVehicles("http://www.walserhonda.com", "/new-inventory/index.htm", "?start=", "Vehicles matching", 0, 16);
 		
 		System.out.println("Run time: " + ((System.currentTimeMillis() - startTime)/1000));

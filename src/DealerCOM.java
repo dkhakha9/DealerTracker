@@ -21,7 +21,7 @@ public class DealerCOM extends WebEngine
 		
 		long startTime = System.currentTimeMillis();
 		
-		vehicleList = vehicleFinder.searchVehicles("http://www.walsernissanburnsville.com", "/new-inventory/index.htm?", "&start=", "Vehicles matching", 0, 16);
+		//vehicleList = vehicleFinder.searchVehicles("http://www.walsernissanburnsville.com", "/new-inventory/index.htm?", "&start=", "Vehicles matching", 0, 16);
 		//vehicleList = vehicleFinder.searchVehicles("http://www.lutherauto.com", "/used-inventory/index.htm?accountId=lutherbrookdalehonda", "&start=", "Vehicles matching", 0, 16);
 		//vehicleList = vehicleFinder.searchVehicles("http://www.walserhonda.com", "/new-inventory/index.htm", "?start=", "Vehicles matching", 0, 16);
 		

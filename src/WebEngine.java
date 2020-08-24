@@ -47,15 +47,15 @@ public abstract class WebEngine
 		this.expVehicleCntKeyWord = expVehicleCntKeyWord;
 	}
 
-	protected List<Vehicle> searchVehicles(String urlStrBase, String urlStrFinalDest, String nextPage, String expNumOfVehiclesKeyWord, int startPage, int pageInc)
+	protected List<Vehicle> searchVehicles(SearchParams webParams)
 	{
 		List<Vehicle> vehicles = new ArrayList<>();
 		
 		int previousListLength, currentListLength;
-		int pageNum = startPage;
+		int pageNum = webParams.startPage;
 		String urlString;
 		
-		setExpVehicleCntKeyWord(expNumOfVehiclesKeyWord);
+		setExpVehicleCntKeyWord(webParams.expNumOfVehiclesKeyWord);
 		this.expectedVehicleCount = -1; // this indicates undetermined vehicle count
 		
 		do
@@ -63,9 +63,9 @@ public abstract class WebEngine
 			previousListLength = vehicles.size();
 			
 			if (pageNum > 1)
-				urlString = urlStrBase + urlStrFinalDest + nextPage + pageNum;
+				urlString = webParams.urlStrBase + webParams.urlStrFinalDest + webParams.nextPage + pageNum;
 			else // first page
-				urlString = urlStrBase + urlStrFinalDest;
+				urlString = webParams.urlStrBase + webParams.urlStrFinalDest;
 			
 			this.pageReadAttempts = 0;
 	
@@ -75,7 +75,7 @@ public abstract class WebEngine
 			
 			//System.out.println("Vehicles found: " + currentListLength);
 
-			pageNum += pageInc;
+			pageNum += webParams.pageInc;
 			
 		// First two conditions are only used by DEALERCOM
 		// Set to TRUE for other engines

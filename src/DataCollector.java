@@ -27,6 +27,8 @@ public class DataCollector
 		try
 		{
 			connection = DriverManager.getConnection(dbURL, dbUser, dbPW);
+			
+			connection.setAutoCommit(false);
 		}
 		catch(Exception ex)
 		{
@@ -34,6 +36,11 @@ public class DataCollector
 			System.out.println(ex.getMessage());
 			return;
 		}
+		
+		if (sandBox.isEmpty())
+			System.out.println("Connected successfully to production");
+		else
+			System.out.println("Connected successfully to sand box");
 			
 		collectData(connection);
 		
@@ -69,30 +76,6 @@ public class DataCollector
 		}
 
 	} /* getInventory */
-	
-	// Returns instance of dealer specific web engine
-	// Returns null if web engine name is unknown
-	private WebEngine getWebEngine(String webEngineName)
-	{
-		WebEngine webEngObj;
-		
-		if (webEngineName.compareToIgnoreCase("DEALERCOM") == 0)
-			webEngObj = new DealerCOM();
-		else if (webEngineName.compareToIgnoreCase("DEALERFIRE") == 0)
-			webEngObj = new DealerFire();
-		else if (webEngineName.compareToIgnoreCase("EBIZAUTOS") == 0)
-			webEngObj = new EBizAutos();
-		else if (webEngineName.compareToIgnoreCase("DEALERON") == 0)
-			webEngObj = new DealerOn();
-		else if (webEngineName.compareToIgnoreCase("DEALERINSPIRE") == 0)
-			webEngObj = new DealerInspire();
-		else if (webEngineName.compareToIgnoreCase("AUTOWEBING") == 0)
-			webEngObj = new AutoWebing();
-		else /* unknown value */
-			webEngObj = null;
-		
-		return webEngObj;
-	} /* getWebEngine */
 	
 	private void updateDealerStock(Connection dbConnection, int dealerID, String dbTable, List<Vehicle> dealerStock)
 	{
@@ -506,97 +489,73 @@ public class DataCollector
 	} /* checkReturnUsed */
 	
 	private void collectData(Connection connection)
-	{
-		try
+	{		
+		WebEngine dealerWebEngine;
+		
+		VehicleSearchConfig searchConfig = new VehicleSearchConfig();
+		
+		List<Vehicle> dealerStock = new ArrayList<>();
+		
+		searchConfig.fetchSearchConfig(connection);
+			
+		//boolean deactivated = true;
+			
+		while (!searchConfig.allDealersProcessed())
 		{
-			if (sandBox.isEmpty())
-				System.out.println("Connected successfully to production");
-			else
-				System.out.println("Connected successfully to sand box");
-			
-			connection.setAutoCommit(false);
-			
-			Statement statement = connection.createStatement();
-			
-			ResultSet resultSet = statement.executeQuery
-					("select dealer_id, url, min_new, web_engine, url_new, url_used, url_nextpage, ttl_key_new, ttl_key_used, "
-					 + "startpagenew, pageincnew, startpageused, pageincused "
-					 + "from DEALERWEB left outer join WEBPARAMS "
-					 + "on lower(WEBPARAMS.param_id) = lower(DEALERWEB.param_id)");
-			
-			/*
-			1 - DEALER_ID
-			2 - URL
-			3 - MIN_NEW
-			4 - WEB_ENGINE
-			5 - URL_NEW
-			6 - URL_USED
-			7 - URL_NEXTPAGE
-			8 - TTL_KEY_NEW
-			9 - TTL_KEY_USED
-			10 - STARTPAGENEW
-			11 - PAGEINCNEW
-			12 - STARTPAGEUSED
-			13 - PAGEINCUSED
-			*/
-			
-			WebEngine dealerWebEngine;
-			
-			List<Vehicle> dealerStock = new ArrayList<>();
-			
-			//boolean deactivated = true;
-			
-			while (resultSet.next())
+			if (searchConfig.isValid())
 			{
-				dealerWebEngine = getWebEngine(resultSet.getString(4));
+				dealerWebEngine = WebEngineFactory.getWebEngineObject(searchConfig.getWebEngineName());
 				
 				//if ((dealerWebEngine == null) || (resultSet.getInt(1) < 40))
 				//if ((dealerWebEngine == null) || (resultSet.getInt(1) != 12))
 				if (dealerWebEngine == null)
-					System.out.println("Unknown web engine: " + resultSet.getString(4));
+					System.out.println("Unknown web engine: " + searchConfig.getWebEngineName());
 				else
 				{
-					System.out.println("Processing URL: " + resultSet.getString(2) + resultSet.getString(5));
-
+					SearchParams newCars = searchConfig.getNew();
+					
+					System.out.println("Processing URL: " + newCars.getURL());
+	
 					// Search new
-					dealerStock = dealerWebEngine.searchVehicles(resultSet.getString(2), resultSet.getString(5),
-							resultSet.getString(7), resultSet.getString(8), resultSet.getInt(10), resultSet.getInt(11));
+					dealerStock = dealerWebEngine.searchVehicles(newCars);
 					
 					//if (dealerWebEngine.dataIsValid(dealerStock, resultSet.getInt(3)))
 					if (dealerWebEngine.dataIsValid(dealerStock))
 					{
 						System.out.println("[NEW] Data collected successfully");
 						//dumpVehiclesToFile(dealerStock);
-						updateDealerStock(connection, resultSet.getInt(1), sandBox + "NEWCARS", dealerStock);
+						updateDealerStock(connection, searchConfig.getDealerID(), sandBox + "NEWCARS", dealerStock);
 					}
 					else
 					{
 						System.out.println("[NEW] Invalid data, ignore");
 					}
 					
-					System.out.println("Processing URL: " + resultSet.getString(2) + resultSet.getString(6));
+					SearchParams usedCars = searchConfig.getUsed();
+					
+					System.out.println("Processing URL: " + usedCars.getURL());
 					
 					// Search used
-					dealerStock = dealerWebEngine.searchVehicles(resultSet.getString(2), resultSet.getString(6),
-							resultSet.getString(7), resultSet.getString(9), resultSet.getInt(12), resultSet.getInt(13));
+					dealerStock = dealerWebEngine.searchVehicles(usedCars);
 					
 					if (dealerWebEngine.dataIsValid(dealerStock))
 					{
 						System.out.println("[USED] Data collected successfully");
 						
-						updateDealerStock(connection, resultSet.getInt(1), sandBox + "USEDCARS", dealerStock);
+						updateDealerStock(connection, searchConfig.getDealerID(), sandBox + "USEDCARS", dealerStock);
 					}
 					else
 					{
 						System.out.println("[USED] Invalid data, ignore");
 					}
 				} /* web engine determined */
-			} /* loop through all dealers */
-		}
-		catch(Exception ex)
-		{
-			System.out.println("Error occured while collecting data: " + ex);
-			System.out.println(ex.getMessage());
-		}
+			}
+			else
+			{
+				System.out.println("Invalid dealer config, ignore");
+			}
+			
+			searchConfig.nextDealer();
+		} /* loop through all dealers */
 	} /* collectData */
 } /* DataCollector */

@@ -37,7 +37,7 @@ public class DealerInspire extends WebEngine
 		
 		long startTime = System.currentTimeMillis();
 		
-		vehicleList = vehicleFinder.searchVehicles("https://www.invergrovehonda.com", "/used-vehicles/", "NA", "Matching Vehicles", 1, 1);
+		//vehicleList = vehicleFinder.searchVehicles("https://www.invergrovehonda.com", "/used-vehicles/", "NA", "Matching Vehicles", 1, 1);
 		//vehicleList = vehicleFinder.searchVehicles("https://www.lutherbrookdalehonda.com/searchused.aspx?pn=1000", "?pt=", "Vehicles)", 1, 1);
 		
 		System.out.println("Run time: " + ((System.currentTimeMillis() - startTime)/1000));
@@ -49,18 +49,18 @@ public class DealerInspire extends WebEngine
 	}
 	
 	@Override
-	protected List<Vehicle> searchVehicles(String urlStrBase, String urlStrFinalDest, String nextPage, String expNumOfVehiclesKeyWord, int startPage, int pageInc)
+	protected List<Vehicle> searchVehicles(SearchParams webParams)
 	{
 		List<Vehicle> vehicles = new ArrayList<>();
 		
 		int previousListLength, currentListLength;
-		int pageNum = startPage;
+		int pageNum = webParams.startPage;
 				
-		setExpVehicleCntKeyWord(expNumOfVehiclesKeyWord);
+		setExpVehicleCntKeyWord(webParams.expNumOfVehiclesKeyWord);
 		this.expectedVehicleCount = -1; // this indicates undetermined vehicle count
 		
 		// Find total vehicle count
-		searchVehiclesOnPage(urlStrBase + urlStrFinalDest);
+		searchVehiclesOnPage(webParams.urlStrBase + webParams.urlStrFinalDest);
 		
 		do
 		{
@@ -68,13 +68,13 @@ public class DealerInspire extends WebEngine
 			
 			this.pageReadAttempts = 0;
 	
-			vehicles.addAll(searchVehiclesOnPageAJAXVersion(urlStrBase, urlStrFinalDest, pageNum));
+			vehicles.addAll(searchVehiclesOnPageAJAXVersion(webParams.urlStrBase, webParams.urlStrFinalDest, pageNum));
 			
 			currentListLength = vehicles.size();
 			
 			//System.out.println("Vehicles found: " + currentListLength);
 
-			pageNum += pageInc;
+			pageNum += webParams.pageInc;
 
 		} while ((previousListLength < vehicles.size()) && (currentListLength < VEHICLE_LIMIT));
 		

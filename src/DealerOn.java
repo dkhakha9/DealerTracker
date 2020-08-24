@@ -25,7 +25,7 @@ public class DealerOn extends WebEngine
 		
 		long startTime = System.currentTimeMillis();
 		
-		vehicleList = vehicleFinder.searchVehicles("https://www.lutherbrookdalehonda.com", "/searchnew.aspx?pn=100", "&pt=", "Vehicles)", 1, 1);
+		//vehicleList = vehicleFinder.searchVehicles("https://www.lutherbrookdalehonda.com", "/searchnew.aspx?pn=100", "&pt=", "Vehicles)", 1, 1);
 		//vehicleList = vehicleFinder.searchVehicles("https://www.lutherbrookdalehonda.com", "/searchnew.aspx?pn=100&Model=", "&pt=", "Vehicles)", 1, 1);
 		//vehicleList = vehicleFinder.searchVehicles("https://www.schmelzvw.com", "/searchnew.aspx?pn=100", "&pt=", "Vehicles)", 1, 1);
 		//vehicleList = vehicleFinder.searchVehicles("https://www.tomkadlec.com", "/searchused.aspx?pn=1000", "?pt=", "Vehicles)", 1, 1);

@@ -28,7 +28,7 @@ public class DealerFire extends WebEngine
 		long startTime = System.currentTimeMillis();
 		
 		//vehicleList = vehicleFinder.searchVehicles("http://www.kenvancehonda.com", "/new-cars-eau-claire-wi", "?page=", "New cars in Eau Claire WI", 1, 1);
-		vehicleList = vehicleFinder.searchVehicles("http://www.kenvancehonda.com", "/used-cars-eau-claire-wi", "?page=", "Pre-Owned cars in Eau Claire WI", 1, 1);
+		//vehicleList = vehicleFinder.searchVehicles("http://www.kenvancehonda.com", "/used-cars-eau-claire-wi", "?page=", "Pre-Owned cars in Eau Claire WI", 1, 1);
 		
 		System.out.println("Run time: " + ((System.currentTimeMillis() - startTime)/1000));
 		

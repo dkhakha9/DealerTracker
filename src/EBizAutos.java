@@ -19,7 +19,7 @@ public class EBizAutos extends WebEngine
 		
 		long startTime = System.currentTimeMillis();
 		
-		vehicleList = vehicleFinder.searchVehicles("http://www.richfieldbloomingtonhonda.com", "/inventory.aspx", "?_page=", "Hondas Found", 1, 1);
+		//vehicleList = vehicleFinder.searchVehicles("http://www.richfieldbloomingtonhonda.com", "/inventory.aspx", "?_page=", "Hondas Found", 1, 1);
 		//vehicleList = vehicleFinder.searchVehicles("http://www.richfieldbloomingtonhonda.com/used-cars.aspx", "?_page=", "Vehicles Found");
 		
 		System.out.println("Run time: " + ((System.currentTimeMillis() - startTime)/1000));
