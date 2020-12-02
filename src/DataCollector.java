@@ -504,7 +504,7 @@ public class DataCollector
 		{
 			if (searchConfig.isValid())
 			{
-				dealerWebEngine = WebEngineFactory.getWebEngineObject(searchConfig.getWebEngineName());
+				dealerWebEngine = WebEngineFactorySingleton.getInstance().getWebEngineObject(searchConfig.getWebEngineName());
 				
 				//if ((dealerWebEngine == null) || (resultSet.getInt(1) < 40))
 				//if ((dealerWebEngine == null) || (resultSet.getInt(1) != 12))
